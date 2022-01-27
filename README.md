@@ -1,0 +1,2 @@
+# action
+testing goreleaser-action
