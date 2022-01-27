@@ -15,5 +15,6 @@ var (
 )
 
 func main() {
+	fmt.Printf("%s, %s, %s, %s, %s\n", cmdname, version, commit, date, builtBy)
 	fmt.Println("This binary works :)")
 }

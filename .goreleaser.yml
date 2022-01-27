@@ -1,29 +1,15 @@
+---
 project_name: actions
 env:
   - GO111MODULE=on
+  - CGO_ENABLED=0
 before:
   hooks:
     - go mod tidy
 builds:
-  # the majority of bins
   - id: actions
-    env:
-      - CGO_ENABLED=0
     goos:
       - linux
-      - darwin
-    goarch:
-      - amd64
-      - arm
-      - arm64
-    ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }} -X main.builtBy=goreleaser
-  # only support windows_amd64
-  - id: actions_windows
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - windows
     goarch:
       - amd64
     ldflags:
@@ -42,3 +28,22 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+dockers:
+  - image_templates:
+      - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-amd64"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/amd64
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.description={{ .ProjectName }}
+      - --label=org.opencontainers.image.url=https://github.com/intrand/{{ .ProjectName }}
+      - --label=org.opencontainers.image.source=https://github.com/intrand/{{ .ProjectName }}
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.created={{ time "2022-01-27T00:00:00Z00:00" }}
+      - --label=org.opencontainers.image.revision={{ .FullCommit }}
+      - --label=org.opencontainers.image.licenses=MIT
+docker_manifests:
+  - name_template: "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-amd64"
