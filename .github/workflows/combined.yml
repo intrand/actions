@@ -76,7 +76,8 @@ jobs:
 
   goreleaser:
     # if: ${{ false }}
-    needs: buildx
+    # needs: buildx
+    needs: show
     runs-on: ubuntu-latest
 
     env:
