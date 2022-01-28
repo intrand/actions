@@ -56,10 +56,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
           build-args: |
-            ARG Version="${{ github.ref_name }}"
-            ARG Commit="${{ github.sha }}"
-            ARG CommitDate="${{ needs.date.outputs.date }}"
-            ARG Builder="github.com/docker/build-push-action"
+            Version="${{ github.ref_name }}"
+            Commit="${{ github.sha }}"
+            CommitDate="${{ needs.date.outputs.date }}"
+            Builder="github.com/docker/build-push-action"
 
   goreleaser:
     needs: buildx
