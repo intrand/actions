@@ -1,0 +1,2 @@
+docker buildx build --platform=linux/amd64 --label=org.opencontainers.image.title=actions --label=org.opencontainers.image.description=actions --label=org.opencontainers.image.url=https://github.com/intrand/actions --label=org.opencontainers.image.source=https://github.com/intrand/actions --label=org.opencontainers.image.version=0 --label=org.opencontainers.image.created=1234 --label=org.opencontainers.image.revision=0 --label=org.opencontainers.image.licenses=MIT -t blah:stuff . --load
+
