@@ -28,7 +28,7 @@ jobs:
         run: echo "::set-output name=date::$(git show -s --format=%cdZ --date=format-local:'%Y-%m-%dT%H:%M:%S')" # eg, 2022-01-28T16:21:36Z
 
       - id: get_go_version
-        run: echo "::set-output name=go_version::$(grep 'go ' ./go.mod | cut -d' ' -f2)" # eg, 2022-01-28T16:21:36Z
+        run: echo "::set-output name=go_version::$(grep 'go ' ./go.mod | cut -d' ' -f2)" # eg, 1.17
 
   buildx:
     needs: get_info
