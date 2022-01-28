@@ -5,7 +5,7 @@ RUN apk add --no-cache --upgrade \
 		git \
 		ca-certificates;
 RUN adduser -D -g '' app;
-RUN pwd; echo; find "${GOPATH}"; file ./actions; stat ./actions;
+RUN pwd; echo; find "${GOPATH}";
 RUN go mod tidy;
 RUN CGO_ENABLED=0 go build -a -o "/go/bin/main";
 
