@@ -1,11 +1,10 @@
 ---
 name: golang
 
-on: push
-# on:
-#   push:
-#     tags:
-#       - "*" # triggers on all new tags
+on:
+  push:
+    tags:
+      - "*" # triggers on all new tags
 
 permissions:
   contents: write
@@ -32,7 +31,6 @@ jobs:
         run: echo "::set-output name=go_version::$(grep 'go ' ./go.mod | cut -d' ' -f2)" # eg, 2022-01-28T16:21:36Z
 
   buildx:
-    if: ${{ false }}
     needs: get_info
     runs-on: ubuntu-latest
 
@@ -67,17 +65,8 @@ jobs:
             CommitDate=${{ needs.get_info.outputs.date }}
             Builder=github.com/docker/build-push-action
 
-  show:
-    needs: get_info
-    runs-on: ubuntu-latest
-    steps:
-      - name: print version being used
-        run: echo ${{ needs.get_info.outputs.go_version }}
-
   goreleaser:
-    # if: ${{ false }}
-    # needs: buildx
-    needs: [get_info,show]
+    needs: [get_info,buildx] # both necessary for task deps and for the 'needs' context to be passed with everything needed
     runs-on: ubuntu-latest
 
     env:
@@ -96,7 +85,6 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ needs.get_info.outputs.go_version }}
-          # go-version: 1.17
 
       - name: goreleaser
         uses: goreleaser/goreleaser-action@v2
