@@ -10,7 +10,7 @@ RUN apk add --no-cache --upgrade \
 		ca-certificates && \
 	adduser -D -g '' app && \
 	go mod tidy && \
-	CGO_ENABLED=0 go build -a -o "/go/bin/main" -ldflags "-s -w -X 'main.version=${Version}'' -X 'main.commit=${Commit}'' -X 'main.date=${CommitDate}'' -X 'main.builtBy=${Builder}'";
+	CGO_ENABLED=0 go build -a -o "/go/bin/main" -ldflags "-s -w -X 'main.version=${Version}' -X 'main.commit=${Commit}' -X 'main.date=${CommitDate}' -X 'main.builtBy=${Builder}'";
 
 FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
