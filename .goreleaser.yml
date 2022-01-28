@@ -6,6 +6,7 @@ env:
 before:
   hooks:
     - go mod tidy
+    - sed -i "s/PLACEHOLDER_BINARY_NAME/{{ .ProjectName }}/g" Dockerfile
 builds:
   # the majority of bins
   - id: actions
