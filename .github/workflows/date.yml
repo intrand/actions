@@ -7,12 +7,12 @@ jobs:
   date:
     runs-on: ubuntu-latest
     env:
-      TZ: Utc/Utc
+      TZ: UTC0
     outputs:
       date: ${{ steps.get_date.outputs.date }}
     steps:
       - id: get_date
-        run: echo "::set-output name=date::$(date +%Y-%m-%dT%H:%M:%SZ)" # 2022-01-28T16:21:36Z
+        run: echo "::set-output name=date::$(git show -s --format=%cdZ --date=format-local:'%Y-%m-%dT%H:%M:%S')" # 2022-01-28T16:21:36Z
 
   show:
     needs: date
