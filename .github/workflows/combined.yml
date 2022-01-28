@@ -67,15 +67,15 @@ jobs:
             CommitDate=${{ needs.get_info.outputs.date }}
             Builder=github.com/docker/build-push-action
 
-
   show:
     needs: get_info
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ needs.get_info.outputs.go_version }}
+      - name: print version being used
+        run: echo ${{ needs.get_info.outputs.go_version }}
 
   goreleaser:
-    if: ${{ false }}
+    # if: ${{ false }}
     needs: buildx
     runs-on: ubuntu-latest
 
