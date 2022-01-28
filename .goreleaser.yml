@@ -31,7 +31,7 @@ changelog:
 dockers:
   - image_templates:
       - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-amd64"
-    dockerfile: Dockerfile
+    dockerfile: Dockerfile_copy
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64
