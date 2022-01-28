@@ -40,6 +40,7 @@ jobs:
           tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
 
   goreleaser:
+    needs: buildx
     runs-on: ubuntu-latest
     env:
       orgrepo: ${{ github.repository }}
