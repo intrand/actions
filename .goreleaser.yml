@@ -15,7 +15,6 @@ builds:
       - darwin
     goarch:
       - amd64
-      - arm
       - arm64
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }} -X main.builtBy=goreleaser
@@ -43,11 +42,11 @@ changelog:
       - "^test:"
 dockers:
   - image_templates:
-      - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}"
-    dockerfile: Dockerfile
+      - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-amd64"
+    dockerfile: Dockerfile_copy
     use: buildx
     build_flag_templates:
-      - --platform=linux/amd64,linux/arm64/v8
+      - --platform=linux/amd64
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.description={{ .ProjectName }}
       - --label=org.opencontainers.image.url=https://github.com/intrand/{{ .ProjectName }}
@@ -56,38 +55,23 @@ dockers:
       - --label=org.opencontainers.image.created={{ time "2022-01-27T00:00:00Z00:00" }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.licenses=MIT
-
-#   - image_templates:
-#       - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-amd64"
-#     dockerfile: Dockerfile_copy
-#     use: buildx
-#     build_flag_templates:
-#       - --platform=linux/amd64
-#       - --label=org.opencontainers.image.title={{ .ProjectName }}
-#       - --label=org.opencontainers.image.description={{ .ProjectName }}
-#       - --label=org.opencontainers.image.url=https://github.com/intrand/{{ .ProjectName }}
-#       - --label=org.opencontainers.image.source=https://github.com/intrand/{{ .ProjectName }}
-#       - --label=org.opencontainers.image.version={{ .Version }}
-#       - --label=org.opencontainers.image.created={{ time "2022-01-27T00:00:00Z00:00" }}
-#       - --label=org.opencontainers.image.revision={{ .FullCommit }}
-#       - --label=org.opencontainers.image.licenses=MIT
-#   - image_templates:
-#       - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-arm64v8"
-#     goarch: arm64
-#     dockerfile: Dockerfile_copy
-#     use: buildx
-#     build_flag_templates:
-#       - --platform=linux/arm64/v8
-#       - --label=org.opencontainers.image.title={{ .ProjectName }}
-#       - --label=org.opencontainers.image.description={{ .ProjectName }}
-#       - --label=org.opencontainers.image.url=https://github.com/intrand/{{ .ProjectName }}
-#       - --label=org.opencontainers.image.source=https://github.com/intrand/{{ .ProjectName }}
-#       - --label=org.opencontainers.image.version={{ .Version }}
-#       - --label=org.opencontainers.image.created={{ time "2022-01-27T00:00:00Z00:00" }}
-#       - --label=org.opencontainers.image.revision={{ .FullCommit }}
-#       - --label=org.opencontainers.image.licenses=MIT
-# docker_manifests:
-#   - name_template: "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}"
-#     image_templates:
-#       - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-amd64"
-#       - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-arm64v8"
+  - image_templates:
+      - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-arm64v8"
+    goarch: arm64
+    dockerfile: Dockerfile_copy
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm64/v8
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.description={{ .ProjectName }}
+      - --label=org.opencontainers.image.url=https://github.com/intrand/{{ .ProjectName }}
+      - --label=org.opencontainers.image.source=https://github.com/intrand/{{ .ProjectName }}
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.created={{ time "2022-01-27T00:00:00Z00:00" }}
+      - --label=org.opencontainers.image.revision={{ .FullCommit }}
+      - --label=org.opencontainers.image.licenses=MIT
+docker_manifests:
+  - name_template: "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-arm64v8"
