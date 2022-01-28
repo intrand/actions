@@ -27,6 +27,7 @@ jobs:
         run: echo "::set-output name=date::$(git show -s --format=%cdZ --date=format-local:'%Y-%m-%dT%H:%M:%S')" # eg, 2022-01-28T16:21:36Z
 
   buildx:
+    needs: date
     runs-on: ubuntu-latest
 
     env:
