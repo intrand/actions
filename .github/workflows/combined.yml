@@ -1,22 +1,24 @@
 ---
-name: actions
+name: ${{ github.repository }}
 
-on:
-  push:
-    tags:
-      - "*" # triggers on all new tags
+on: push
+# on:
+#   push:
+#     tags:
+#       - "*" # triggers on all new tags
 
 permissions:
   contents: write
   packages: write
 
 jobs:
-  date:
+  get_info:
     runs-on: ubuntu-latest
     env:
       TZ: UTC0
     outputs:
       date: ${{ steps.get_date.outputs.date }}
+      go_version: ${{ steps.get_go_version.outputs.go_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,8 +28,18 @@ jobs:
       - id: get_date
         run: echo "::set-output name=date::$(git show -s --format=%cdZ --date=format-local:'%Y-%m-%dT%H:%M:%S')" # eg, 2022-01-28T16:21:36Z
 
-  buildx:
+      - id: get_go_version
+        run: echo "::set-output name=go_version::$(grep 'go ' ./go.mod | cut -d' ' -f2)" # eg, 2022-01-28T16:21:36Z
+
+  show:
     needs: date
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{needs.get_info.outputs.go_version}}
+
+  buildx:
+    if: ${{ false }}
+    needs: get_info
     runs-on: ubuntu-latest
 
     env:
@@ -58,10 +70,11 @@ jobs:
           build-args: |
             Version=${{ github.ref_name }}
             Commit=${{ github.sha }}
-            CommitDate=${{ needs.date.outputs.date }}
+            CommitDate=${{ needs.get_info.outputs.date }}
             Builder=github.com/docker/build-push-action
 
   goreleaser:
+    if: ${{ false }}
     needs: buildx
     runs-on: ubuntu-latest
 
