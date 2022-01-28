@@ -6,11 +6,13 @@ on: push
 jobs:
   date:
     runs-on: ubuntu-latest
+    env:
+      TZ: Utc/Utc
     outputs:
       date: ${{ steps.get_date.outputs.date }}
     steps:
       - id: get_date
-        run: echo "::set-output name=date::$(date)"
+        run: echo "::set-output name=date::$(date +%Y-%m-%dT%H:%M:%SZ)" # 2022-01-28T16:21:36Z
 
   show:
     needs: date
