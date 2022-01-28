@@ -77,12 +77,11 @@ jobs:
   goreleaser:
     # if: ${{ false }}
     # needs: buildx
-    needs: show
+    needs: [get_info,show]
     runs-on: ubuntu-latest
 
     env:
       orgrepo: ${{ github.repository }}
-      go_version: ${{ needs.get_info.outputs.go_version }}
 
     steps:
       - name: print version being used
@@ -96,7 +95,7 @@ jobs:
       - name: setup-go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ go_version }}
+          go-version: ${{ needs.get_info.outputs.go_version }}
           # go-version: 1.17
 
       - name: goreleaser
