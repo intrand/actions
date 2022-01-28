@@ -8,7 +8,7 @@ before:
     - go mod tidy
 builds:
   # the majority of bins
-  - id: "{{ .Projectname }}"
+  - id: "{{ .ProjectName }}"
     goos:
       - linux
       - darwin
@@ -18,7 +18,7 @@ builds:
     ldflags:
       - "-s -w -X 'main.version={{.Version}}' -X 'main.commit={{.Commit}}' -X 'main.date={{ .CommitDate }}' -X 'main.builtBy=github.com/goreleaser/goreleaser-action'"
   # only support windows_amd64
-  - id: "{{ .Projectname }}_windows"
+  - id: "{{ .ProjectName }}_windows"
     goos:
       - windows
     goarch:
