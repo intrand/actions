@@ -44,7 +44,7 @@ release:
   footer: |
     # OCI Image
     
-    `{{ .Env "orgrepo" }}:{{ .Version }}`
+    `{{ .Env.orgrepo }}:{{ .Version }}`
 # dockers:
 #   - image_templates:
 #       - "ghcr.io/intrand/{{ .ProjectName }}:{{ .Version }}-amd64"
