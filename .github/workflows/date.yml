@@ -1,0 +1,19 @@
+---
+name: actions
+
+on: push
+
+jobs:
+  date:
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.get_date.outputs.date }}
+    steps:
+      - id: get_date
+        run: echo "::set-output name=date::date"
+
+  show:
+    needs: date
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{needs.date.outputs.date}}

@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   buildx:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
@@ -38,8 +39,14 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          build-args: |
+            ARG Version="{{ github.ref_name }}"
+            ARG Commit="{{ github.sha }}"
+            ARG Builder="github.com/docker/build-push-action"
+          # ARG CommitDate="{{ .CommitDate }}"
 
   goreleaser:
+    if: ${{ false }}
     needs: buildx
     runs-on: ubuntu-latest
     env:

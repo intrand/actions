@@ -1,13 +1,16 @@
 FROM golang:alpine as builder
+ARG Version
+ARG Commit
+ARG CommitDate
+ARG Builder="buildx"
 COPY . "${GOPATH}/src/package/app/"
 WORKDIR "${GOPATH}/src/package/app"
 RUN apk add --no-cache --upgrade \
 		git \
-		ca-certificates;
-RUN adduser -D -g '' app;
-RUN pwd; echo; find "${GOPATH}";
-RUN go mod tidy;
-RUN CGO_ENABLED=0 go build -a -o "/go/bin/main";
+		ca-certificates && \
+	adduser -D -g '' app && \
+	go mod tidy && \
+	CGO_ENABLED=0 go build -a -o "/go/bin/main" -s -w -X main.version="${Version}" -X main.commit="${Commit}" -X main.date="${CommitDate}" -X main.builtBy="${Builder}";
 
 FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
