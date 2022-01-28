@@ -1,5 +1,5 @@
 ---
-project_name: actions
+# project_name: {{ .ProjectName }}
 env:
   - GO111MODULE=on
   - CGO_ENABLED=0
@@ -8,7 +8,7 @@ before:
     - go mod tidy
 builds:
   # the majority of bins
-  - id: actions
+  - id: "{{ .Projectname }}"
     goos:
       - linux
       - darwin
@@ -18,7 +18,7 @@ builds:
     ldflags:
       - "-s -w -X 'main.version={{.Version}}' -X 'main.commit={{.Commit}}' -X 'main.date={{ .CommitDate }}' -X 'main.builtBy=github.com/goreleaser/goreleaser-action'"
   # only support windows_amd64
-  - id: actions_windows
+  - id: "{{ .Projectname }}_windows"
     goos:
       - windows
     goarch:
