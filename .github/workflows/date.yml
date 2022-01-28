@@ -13,6 +13,8 @@ jobs:
     steps:
       - id: get_date
         run: echo "::set-output name=date::$(git show -s --format=%cdZ --date=format-local:'%Y-%m-%dT%H:%M:%S')" # 2022-01-28T16:21:36Z
+      - id: blah
+        run: pwd; find .;
 
   show:
     needs: date
