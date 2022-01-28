@@ -95,7 +95,7 @@ jobs:
       - name: setup-go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ needs.get_info.outputs.go_version }}
+          go-version: "${{ needs.get_info.outputs.go_version }}"
           # go-version: 1.17
 
       - name: goreleaser
