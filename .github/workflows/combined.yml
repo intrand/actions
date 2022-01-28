@@ -12,12 +12,24 @@ permissions:
 
 jobs:
   buildx:
-    if: ${{ false }}
     runs-on: ubuntu-latest
+
     env:
-      DOCKER_CLI_EXPERIMENTAL: "enabled"
+      TZ: UTC0
+      DOCKER_CLI_EXPERIMENTAL: enabled
+
+    outputs:
+      date: ${{ steps.get_date.outputs.date }}
 
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - id: get_date
+        run: echo "::set-output name=date::$(git show -s --format=%cdZ --date=format-local:'%Y-%m-%dT%H:%M:%S')" # eg, 2022-01-28T16:21:36Z
+
       - name: set up qemu
         uses: docker/setup-qemu-action@v1
 
@@ -40,15 +52,15 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
           build-args: |
-            ARG Version="{{ github.ref_name }}"
-            ARG Commit="{{ github.sha }}"
+            ARG Version="${{ github.ref_name }}"
+            ARG Commit="${{ github.sha }}"
+            ARG CommitDate="${{needs.buildx.outputs.date}}"
             ARG Builder="github.com/docker/build-push-action"
-          # ARG CommitDate="{{ .CommitDate }}"
 
   goreleaser:
-    if: ${{ false }}
     needs: buildx
     runs-on: ubuntu-latest
+
     env:
       orgrepo: ${{ github.repository }}
 
