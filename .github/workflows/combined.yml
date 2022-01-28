@@ -31,12 +31,6 @@ jobs:
       - id: get_go_version
         run: echo "::set-output name=go_version::$(grep 'go ' ./go.mod | cut -d' ' -f2)" # eg, 2022-01-28T16:21:36Z
 
-  show:
-    needs: get_info
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ${{ needs.get_info.outputs.go_version }}
-
   buildx:
     if: ${{ false }}
     needs: get_info
@@ -73,6 +67,13 @@ jobs:
             CommitDate=${{ needs.get_info.outputs.date }}
             Builder=github.com/docker/build-push-action
 
+
+  show:
+    needs: get_info
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ needs.get_info.outputs.go_version }}
+
   goreleaser:
     if: ${{ false }}
     needs: buildx
@@ -82,13 +83,13 @@ jobs:
       orgrepo: ${{ github.repository }}
 
     steps:
+      - name: print version being used
+        run: echo ${{ needs.get_info.outputs.go_version }}
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: print version being used
-        run: echo ${{ needs.get_info.outputs.go_version }}
 
       - name: setup-go
         uses: actions/setup-go@v2
