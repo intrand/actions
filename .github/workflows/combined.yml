@@ -98,9 +98,6 @@ jobs:
     needs: [get_info,buildx] # both necessary for task deps and for the 'needs' context to be passed with everything needed
     runs-on: ubuntu-latest
 
-    env:
-      orgrepo: ${{ github.repository }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -119,3 +116,4 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          cosignPub: ${{ secrets.COSIGN_PUBLIC_KEY }}
