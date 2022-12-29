@@ -6,9 +6,9 @@ on:
     tags:
       - "*" # triggers on all new tags
 
-permissions:
-  contents: write
-  packages: write
+env:
+  registry: ghcr.io
+  image_name: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
 
 jobs:
   get_info:
@@ -20,7 +20,7 @@ jobs:
       go_version: ${{ steps.get_go_version.outputs.go_version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -34,21 +34,28 @@ jobs:
     needs: get_info
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+      packages: write
+
     env:
       DOCKER_CLI_EXPERIMENTAL: enabled
 
     steps:
+      - name: cosign-installer
+        uses: sigstore/cosign-installer@v2
+
       - name: set up qemu
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: set up docker buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: docker login
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
-          registry: ghcr.io
+          registry: ${{ env.registry }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -60,17 +67,22 @@ jobs:
 
       - name: build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          tags: ${{ env.image_name }}
           build-args: |
             Version=${{ github.ref_name }}
             Commit=${{ github.sha }}
             CommitDate=${{ needs.get_info.outputs.date }}
             Builder=github.com/docker/build-push-action
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: sign
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        run: cosign sign --key cosign.key ${{ env.image_name }}
 
   goreleaser:
     needs: [get_info,buildx] # both necessary for task deps and for the 'needs' context to be passed with everything needed
@@ -81,17 +93,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: setup-go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ needs.get_info.outputs.go_version }}
 
       - name: goreleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v4
         with:
           version: latest
           args: release --rm-dist
