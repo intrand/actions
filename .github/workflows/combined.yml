@@ -94,62 +94,28 @@ jobs:
         # to use ${{ steps.meta.outputs.tags }} here, it must also exist in registry from the docker_build step
         run: cosign sign --key env://COSIGN_PRIVATE_KEY ${{ env.image_name }} # use static key
 
-  # goreleaser:
-  #   needs: [get_info,buildx] # both necessary for task deps and for the 'needs' context to be passed with everything needed
-  #   runs-on: ubuntu-latest
-
-  #   env:
-  #     orgrepo: ${{ github.repository }}
-
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-
-  #     - name: setup-go
-  #       uses: actions/setup-go@v3
-  #       with:
-  #         go-version: ${{ needs.get_info.outputs.go_version }}
-
-  #     - name: goreleaser
-  #       uses: goreleaser/goreleaser-action@v4
-  #       with:
-  #         version: latest
-  #         args: release --rm-dist
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-  release:
+  goreleaser:
     needs: [get_info,buildx] # both necessary for task deps and for the 'needs' context to be passed with everything needed
     runs-on: ubuntu-latest
+
+    env:
+      orgrepo: ${{ github.repository }}
+
     steps:
-      - name: create release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: setup-go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ needs.get_info.outputs.go_version }}
+
+      - name: goreleaser
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          version: latest
+          args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: |
-            OCI image:
-
-            ```
-            ${{ env.image_name }}
-            ```
-
-            verify signature using `cosign`:
-
-            ```
-            cat <<EOF > cosign.pub
-            ${{ secrets.COSIGN_PUBLIC_KEY }}
-            EOF
-
-            cosign verify --key cosign.pub ${{ env.image_name }};
-
-            rm -f cosign.pub
-            ```
-          draft: false
-          prerelease: false
