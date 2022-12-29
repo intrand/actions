@@ -24,11 +24,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - id: get_date
-        run: echo "::set-output name=date::$(git show -s --format=%cdZ --date=format-local:'%Y-%m-%dT%H:%M:%S')" # eg, 2022-01-28T16:21:36Z
+      - name: get date
+        id: get_date
+        run: echo "get_date=$(git show -s --format=%cdZ --date=format-local:'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_OUTPUT
 
-      - id: get_go_version
-        run: echo "::set-output name=go_version::$(grep 'go ' ./go.mod | cut -d' ' -f2)" # eg, 1.17
+      - name: get go version
+        id: get_go_version
+        run: echo "go_version=$(grep 'go ' ./go.mod | cut -d' ' -f2)" >> $GITHUB_OUTPUT
 
   buildx:
     needs: get_info
