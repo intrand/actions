@@ -65,7 +65,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          images: ${{ env.image_name }}
 
       - name: build and push
         id: docker_build
